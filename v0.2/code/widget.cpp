@@ -98,7 +98,8 @@ Widget::Widget(QWidget *parent) :
         }
     }
 
-    startTimer(20);
+    timerRandomId = startTimer(1000/(dMas*2));
+    timerUpdateId = startTimer(1000/60);
 }
 
 Widget::~Widget()
@@ -165,49 +166,57 @@ void Widget::paintEvent(QPaintEvent *)
     DrawMas(p,masS,15);
 }
 
-void Widget::timerEvent(QTimerEvent *)
+void Widget::timerEvent(QTimerEvent *event)
 {
-    QColor hsv;
-
-    int h,s,v;
-
-    for(int x = 0; x<dMas; x++)
+    // Timer random
+    if(event->timerId() == timerRandomId)
     {
-        for(int y = 0; y<dMas; y++)
+        QColor hsv;
+
+        int h,s,v;
+
+        for(int x = 0; x<dMas; x++)
         {
-            hsv = mas[x][y].toHsv();
-            h = hsv.hue();
-            s = hsv.saturation();
-            v = hsv.value();
-            v-=6;
-            if(v<0)
-                v = 0;
-            hsv.setHsv(h,s,v);
-            mas[x][y] = hsv.toRgb();
+            for(int y = 0; y<dMas; y++)
+            {
+                hsv = mas[x][y].toHsv();
+                h = hsv.hue();
+                s = hsv.saturation();
+                v = hsv.value();
+                v-=6;
+                if(v<0)
+                    v = 0;
+                hsv.setHsv(h,s,v);
+                mas[x][y] = hsv.toRgb();
+            }
+        }
+
+        if(random!=-1 && effect)
+        {
+            timerRandom++;
+
+            if(timerRandom > random)
+            {
+                timerRandom = 0;
+                int x = 1+rand()%(dMas-2);
+                int y = 1+rand()%(dMas-2);
+                int r = rand()%255;
+                int g = rand()%255;
+                int b = rand()%255;
+                mas[x][y] = QColor(r,g,b);
+                mas[x+1][y] = QColor(r/2,g/2,b/2);
+                mas[x][y+1] = QColor(r/2,g/2,b/2);
+                mas[x-1][y] = QColor(r/2,g/2,b/2);
+                mas[x][y-1] = QColor(r/2,g/2,b/2);
+            }
         }
     }
 
-    if(random!=-1 && effect)
+    // Timer Update
+    if(event->timerId() == timerUpdateId)
     {
-        timerRandom++;
-
-        if(timerRandom > random)
-        {
-            timerRandom = 0;
-            int x = 1+rand()%(dMas-2);
-            int y = 1+rand()%(dMas-2);
-            int r = rand()%255;
-            int g = rand()%255;
-            int b = rand()%255;
-            mas[x][y] = QColor(r,g,b);
-            mas[x+1][y] = QColor(r/2,g/2,b/2);
-            mas[x][y+1] = QColor(r/2,g/2,b/2);
-            mas[x-1][y] = QColor(r/2,g/2,b/2);
-            mas[x][y-1] = QColor(r/2,g/2,b/2);
-        }
+        update();
     }
-
-    update();
 }
 
 void Widget::mouseMoveEvent(QMouseEvent *event)

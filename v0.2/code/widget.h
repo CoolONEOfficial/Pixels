@@ -17,7 +17,7 @@ class Widget : public QWidget
     Q_OBJECT
 
     static const int dMas = 20;
-    static const int random = 20;
+    static const int random = dMas;
 
     QColor mas[dMas][dMas];
 
@@ -37,6 +37,9 @@ class Widget : public QWidget
     int timerRandom;
     int moveX,moveY;
     bool effect;
+
+    int timerUpdateId;
+    int timerRandomId;
 
 public:
     explicit Widget(QWidget *parent = 0);
