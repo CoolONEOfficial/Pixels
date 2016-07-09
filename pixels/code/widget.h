@@ -16,14 +16,18 @@ class Widget : public QWidget
 {
     Q_OBJECT
 
-    static const int dMas = 20;
+#ifdef ANDROID
+    static const int dMas = 8;
+#else
+    static const int dMas = 15;
+#endif
+
     static const int random = dMas;
 
     QColor mas[dMas][dMas];
 
     static int masExit[7][7];
-    static int masMaximize[7][7];
-    static int masMinimize[7][7];
+    static int masSettings[7][7];
 
     static int masP[7][7];
     static int masI[7][7];
@@ -49,9 +53,17 @@ public:
     void paintEvent(QPaintEvent *);
     void timerEvent(QTimerEvent *);
 
+private slots:
+    void on_checkBox_effect_clicked(bool checked);
+
+    void on_pushButton_back_released();
+
 private:
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
+    void addDark(QColor &cColor, int dark);
+    void setSettingsVisible(bool visible);
+
     Ui::Widget *ui;
 };
 

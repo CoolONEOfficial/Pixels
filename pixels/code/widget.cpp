@@ -16,21 +16,13 @@ int Widget::masExit[7][7]={ {0,0,0,0,0,0,0},
                   {0,1,0,0,0,1,0},
                   {0,0,0,0,0,0,0} };
 
-int Widget::masMaximize[7][7]={ {0,0,0,0,0,0,0},
-                          {0,1,1,1,1,1,0},
-                          {0,1,1,1,1,1,0},
-                          {0,1,0,0,0,1,0},
-                          {0,1,0,0,0,1,0},
-                          {0,1,1,1,1,1,0},
+int Widget::masSettings[7][7]={ {0,0,0,0,0,0,0},
+                          {0,0,1,1,1,1,0},
+                          {0,1,0,0,0,0,0},
+                          {0,0,1,1,1,0,0},
+                          {0,0,0,0,0,1,0},
+                          {0,1,1,1,1,0,0},
                           {0,0,0,0,0,0,0} };
-
-int Widget::masMinimize[7][7]={ {0,0,0,0,0,0,0},
-                                {0,0,0,0,0,0,0},
-                                {0,0,0,0,0,0,0},
-                                {0,0,0,0,0,0,0},
-                                {0,1,1,1,1,1,0},
-                                {0,1,1,1,1,1,0},
-                                {0,0,0,0,0,0,0} };
 
 int Widget::masP[7][7]={ {0,0,0,0,0,0,0},
                                 {0,1,1,1,1,1,0},
@@ -84,12 +76,10 @@ Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
 {
+    // Start effect
     effect = true;
 
-    ui->setupUi(this);
-
-    showFullScreen();
-
+    // Clear all slots
     for(int x = 0; x<dMas; x++)
     {
         for(int y = 0; y<dMas; y++)
@@ -98,8 +88,18 @@ Widget::Widget(QWidget *parent) :
         }
     }
 
+    ui->setupUi(this);
+
+    showFullScreen();
+
+    // ide settings
+    setSettingsVisible(false);
+
+    // Timers
     timerRandomId = startTimer(1000/(dMas*2));
     timerUpdateId = startTimer(1000/60);
+
+    update();
 }
 
 Widget::~Widget()
@@ -132,38 +132,82 @@ void Widget::DrawMas(QPainter &p,int mas[7][7],int line)
 
 void Widget::paintEvent(QPaintEvent *)
 {
-    int cellSizeX = width()/dMas;
-    int cellSizeY = height()/dMas;
+    int cellSizeX = width() / dMas;
+    int cellSizeY = height() / dMas;
 
     QPainter p(this);
 
-    p.setRenderHints(QPainter::Antialiasing,true);
+    p.setRenderHints(QPainter::Antialiasing);
 
+    // Background
+    p.setBrush(Qt::black);
+    p.drawRect(0, 0, width(), height());
+
+    // Grind
+    if(ui->checkBox_grid->isChecked())
+    {
+        // Draw
+        QPen pen;
+        pen.setColor(Qt::white);
+        p.setPen(pen);
+
+        for(int x = 0; x<dMas; x++)
+        {
+            p.drawLine(x * cellSizeX, 0, x * cellSizeX, height());
+        }
+
+        for(int y = 0; y<dMas; y++)
+        {
+            p.drawLine(0, y * cellSizeY, width(), y * cellSizeY);
+        }
+    }
+
+    // Pixels
     for(int x = 0; x<dMas; x++)
     {
         for(int y = 0; y<dMas; y++)
         {
-            p.setBrush(mas[x][y]);
-            p.drawRect(x * cellSizeX,
-                       y * cellSizeY,
-                       cellSizeX,
-                       cellSizeY);
+            if(mas[x][y].saturation() > 0)
+            {
+                QColor bColor = mas[x][y];
+                addDark(bColor, ui->slider_bright->maximum() - ui->slider_bright->value());
+
+                // Set color
+                p.setBrush(bColor);
+
+                int shiftX = ((ui->slider_width->value()/10.0) * cellSizeX);
+                int shiftY = ((ui->slider_height->value()/10.0) * cellSizeY);
+                int width = cellSizeX + shiftX*2;
+                int height = cellSizeY + shiftY*2;
+
+                // Draw
+                p.setPen(Qt::NoPen);
+                p.drawRect(x * cellSizeX - shiftX,
+                           y * cellSizeY - shiftY,
+                           width,
+                           height);
+            }
         }
     }
 
-    p.setBrush(Qt::black);
-    p.drawRect(0,height()-4,width(),4);
+    if(!ui->pushButton_back->isVisible())
+    {
+        p.setPen(Qt::SolidLine);
 
-    DrawMas(p,masExit,1);
-    DrawMas(p,masMaximize,2);
-    DrawMas(p,masMinimize,3);
+        // Draw images
+        DrawMas(p,masExit,1);
+        DrawMas(p,masSettings, 2);
 
-    DrawMas(p,masP,20);
-    DrawMas(p,masI,19);
-    DrawMas(p,masX,18);
-    DrawMas(p,masE,17);
-    DrawMas(p,masL,16);
-    DrawMas(p,masS,15);
+        if(dMas >= 9)
+        {
+            DrawMas(p,masP, dMas);
+            DrawMas(p,masI, dMas-1);
+            DrawMas(p,masX, dMas-2);
+            DrawMas(p,masE, dMas-3);
+            DrawMas(p,masL, dMas-4);
+            DrawMas(p,masS, dMas-5);
+        }
+    }
 }
 
 void Widget::timerEvent(QTimerEvent *event)
@@ -171,23 +215,12 @@ void Widget::timerEvent(QTimerEvent *event)
     // Timer random
     if(event->timerId() == timerRandomId)
     {
-        QColor hsv;
-
-        int h,s,v;
-
+        // To black all colors
         for(int x = 0; x<dMas; x++)
         {
             for(int y = 0; y<dMas; y++)
             {
-                hsv = mas[x][y].toHsv();
-                h = hsv.hue();
-                s = hsv.saturation();
-                v = hsv.value();
-                v-=6;
-                if(v<0)
-                    v = 0;
-                hsv.setHsv(h,s,v);
-                mas[x][y] = hsv.toRgb();
+                addDark(mas[x][y], ui->slider_speed->value());
             }
         }
 
@@ -230,28 +263,19 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
     int cellX = moveX/cellSizeX;
     int cellY = moveY/cellSizeY;
 
-    if(cellY!=oldPos.y() || cellX!=oldPos.x())
+    if(cellY != oldPos.y() || cellX != oldPos.x())
     {
         if(cellX>=0 && cellX<dMas && cellY>=0 && cellY<dMas)
         {
             QColor color;
 
-
             if(cellX == dMas-1 && cellY == 0 )
                 color = QColor(255,0,0);
             else
-            if(cellX == dMas-2 && cellY == 0 )
-                color = QColor(255,255,255);
-            else
-            if(cellX == dMas-3 && cellY == 0 )
-                color = QColor(255,255,255);
-            else
-                color = QColor(100+rand()%156,100+rand()%156,100+rand()%156);
+                color = QColor(100+rand()%156, 100+rand()%156, 100+rand()%156);
 
             mas[cellX][cellY] = color;
         }
-
-
     }
 
     oldPos.setX(cellX);
@@ -265,21 +289,63 @@ void Widget::mouseReleaseEvent(QMouseEvent *event)
     int cellSizeX = width()/dMas;
     int cellSizeY = height()/dMas;
 
-    if(event->x()>width()-cellSizeX && event->y()<cellSizeY)
+    if(event->x()>width()-cellSizeX &&
+       event->y()<cellSizeY)
     {
         close();
-        return;
     }
 
-    if(event->x()>width()-(cellSizeX*2) && event->y()<cellSizeY)
+    else if(event->x() > width() - cellSizeX*2 &&
+             event->x() < width() - cellSizeX &&
+             event->y() < cellSizeY)
     {
-        showFullScreen();
-        return;
+        setSettingsVisible(true);
     }
+}
 
-    if(event->x()>width()-(cellSizeX*3) && event->y()<cellSizeY)
-    {
-        showMaximized();
-        return;
-    }
+void Widget::addDark(QColor &cColor, int dark)
+{
+    QColor hsv = cColor.toHsv();
+    int h = hsv.hue();
+    int s = hsv.saturation();
+    int v = hsv.value() - dark;
+
+    if(v < 0)
+        v = 0;
+
+    if(v > 255)
+        v = 255;
+
+    hsv.setHsv(h,s,v);
+
+    cColor = hsv.toRgb();
+}
+
+void Widget::setSettingsVisible(bool visible)
+{
+    ui->checkBox_effect->setVisible(visible);
+    ui->checkBox_grid->setVisible(visible);
+
+    ui->label->setVisible(visible);
+    ui->label_bright->setVisible(visible);
+    ui->label_height->setVisible(visible);
+    ui->label_speed->setVisible(visible);
+    ui->label_width->setVisible(visible);
+
+    ui->pushButton_back->setVisible(visible);
+
+    ui->slider_bright->setVisible(visible);
+    ui->slider_height->setVisible(visible);
+    ui->slider_speed->setVisible(visible);
+    ui->slider_width->setVisible(visible);
+}
+
+void Widget::on_checkBox_effect_clicked(bool checked)
+{
+    effect = checked;
+}
+
+void Widget::on_pushButton_back_released()
+{
+    setSettingsVisible(false);
 }

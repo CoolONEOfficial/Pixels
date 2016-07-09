@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>501</width>
+    <height>423</height>
    </rect>
   </property>
   <property name="cursor">
@@ -19,6 +19,223 @@
   <property name="windowTitle">
    <string>Widget</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QCheckBox" name="checkBox_effect">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Effect</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_grid">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Grid</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="layout_speed">
+     <item>
+      <widget class="QLabel" name="label_speed">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Speed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="slider_speed">
+       <property name="minimum">
+        <number>4</number>
+       </property>
+       <property name="maximum">
+        <number>50</number>
+       </property>
+       <property name="value">
+        <number>15</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="layout_bright">
+     <item>
+      <widget class="QLabel" name="label_bright">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Brightness&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="slider_bright">
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>150</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
+       <property name="value">
+        <number>150</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="invertedAppearance">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="layout_size">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="font">
+        <font>
+         <pointsize>15</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Size&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="layout_wh">
+       <item>
+        <layout class="QVBoxLayout" name="layout_w">
+         <item>
+          <widget class="QLabel" name="label_width">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Width&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="slider_width">
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>10</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="layout_h">
+         <item>
+          <widget class="QLabel" name="label_height">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Height&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="slider_height">
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <number>10</number>
+           </property>
+           <property name="pageStep">
+            <number>1</number>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton_back">
+     <property name="font">
+      <font>
+       <pointsize>15</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Back</string>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
